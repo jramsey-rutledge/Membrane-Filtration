@@ -6,13 +6,13 @@
 bcType :: bcType (){
     // read Vm from velocity . inp
     std::ifstream file1;
-    file1.open ("velocity.inp");
+    file1.open ("input/velocity.inp");
     Vm = readDouble ( file1 );
     file1.close ();
 
     // read k from file C. inp
     std::ifstream file2;
-    file2.open("C.inp");
+    file2.open("input/C.inp");
     readDouble(file2); readDouble(file2); // disregard first two entries
     k = readDouble(file2);
     file2.close();

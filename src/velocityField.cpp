@@ -4,7 +4,7 @@
 velocityField :: velocityField ( const meshType & Mesh ){
     h = 0.5* Mesh.Ly ;
     std :: ifstream file ;
-    file . open ("velocity.inp");
+    file . open ("input/velocity.inp");
     Uin = readDouble ( file );
     Vm = readDouble ( file );
     file.close ();

@@ -4,10 +4,8 @@
 #include "volScalarField.h"
 #include "velocityField.h"
 #include <string>
-#define _USE_MATH_DEFINES
 #include <cmath>
 #include <vector>
-#include <math.h>
 #include <iostream>
 #include "Eigen/Sparse"
 #include "Eigen/SparseLU"
@@ -42,8 +40,10 @@ double matrixType::getRHS ( int i , int j ) const {
 
 // Function to build a sparse matrix
 void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, const volScalarField& T) {
-    double dx = Mesh.dx;
-    double dy = Mesh.dy;
+    ROW.clear();
+    COL.clear();
+    VAL.clear();
+
     int row ;
     double a,b,g;
 
@@ -52,14 +52,14 @@ void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, co
         // south
         row = i ;
         T.BC.south(Mesh.xc[i],0.0,a,b,g);
-        addEntry(row,row,0.5*a+b/dy);
-        addEntry(row,row + Nx2,0.5*a-b/dy);
+        addEntry(row,row,0.5*a+b/Mesh.dy[0]);
+        addEntry(row,row + Nx2,0.5*a-b/Mesh.dy[0]);
 
         // north
         row = (Ny2-1)* Nx2 + i;
         T.BC.north(Mesh.xc[i],0.0,a,b,g);
-        addEntry(row,row,0.5*a+b/dy);
-        addEntry(row,row - Nx2,0.5*a-b/dy);
+        addEntry(row,row,0.5*a+b/Mesh.dy[Ny-1]);
+        addEntry(row,row - Nx2,0.5*a-b/Mesh.dy[Ny-1]);
     }
 
     // east / west boundary conditions
@@ -67,61 +67,66 @@ void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, co
     // west 
         row = j * Nx2;
         T.BC.west(Mesh.yc[j],0.0,a,b,g);
-        addEntry(row,row,0.5*a+b/dx);
-        addEntry(row,row+1, 0.5*a-b/dx);
+        addEntry(row,row,0.5*a+b/Mesh.dx[0]);
+        addEntry(row,row+1, 0.5*a-b/Mesh.dx[0]);
 
     // east
         row = (j+1) * Nx2 - 1;
         //T.BC.east(Mesh.yc[j],0.0,a,b,g);
-        //addEntry(row,row,a*0.5+b/dx);
-        //addEntry(row,row-1,a*0.5-b/dx);
+        //addEntry(row,row,a*0.5+b/Mesh.dx[Nx-1]);
+        //addEntry(row,row-1,a*0.5-b/Mesh.dx[Nx-1]);
         addEntry(row,row, 1.0);
         addEntry(row,row-1,-2.0);
         addEntry(row,row-2,1.0);
     }
 
     // 5-point stencil
-    double ae = T.k*dy/dx;
-    double aw = T.k*dy/dx;
-    double an = T.k*dx/dy;
-    double as = T.k*dx/dy;
+    for (int i=1; i<=Nx; i++) {
+        for (int j=1; j<=Ny; j++) {
+            row = j*Nx2 + i;
+            
+            // Geometry
+            double dxe = Mesh.xc[i+1] - Mesh.xc[i];
+            double dxw = Mesh.xc[i]   - Mesh.xc[i-1];
+            double dyn = Mesh.yc[j+1] - Mesh.yc[j];
+            double dys = Mesh.yc[j]   - Mesh.yc[j-1];
 
-    double ap = ae + aw + an + as;
+            double Ae = Mesh.yf[j] - Mesh.yf[j-1];
+            double Aw = Ae;
+            double An = Mesh.xf[i] - Mesh.xf[i-1];
+            double As = An;
 
-    for (int i = 1; i <= Nx; i++) {
-        for (int j = 1; j <= Ny; j++) {
+            // Diffusion
+            double ae = T.k * Ae / dxe;
+            double aw = T.k * Aw / dxw;
+            double an = T.k * An / dyn;
+            double as = T.k * As / dys;
 
-            row = j * Nx2 + i;
-
+            // Fluxes
             double phi_e = flux.gete(i,j);
             double phi_w = flux.getw(i,j);
             double phi_s = flux.gets(i,j);
             double phi_n = flux.getn(i,j);
 
-            double Fe = T.cp*phi_e*dy;
-            double Fw = T.cp*phi_w*dy;
-            double Fs = T.cp*phi_s*dx;
-            double Fn = T.cp*phi_n*dx;
+            double Fe = T.cp * phi_e * Ae;
+            double Fw = T.cp * phi_w * Aw;
+            double Fn = T.cp * phi_n * An;
+            double Fs = T.cp * phi_s * As;
 
-            double cE = 0.5*Fe;
+            // Central differencing convection
+            double cE =  0.5*Fe;
             double cW = -0.5*Fw;
+            double cN =  0.5*Fn;
             double cS = -0.5*Fs;
-            double cN = 0.5*Fn;
             double cP = 0.5*(Fe-Fw+Fn-Fs);
 
-            // Center
-            addEntry(row,row,ap+cP); 
+            double ap = ae+aw+an+as;
 
-            // East
+            // Matrix
+            addEntry(row,row,ap+cP);
             addEntry(row,row+1,-ae+cE);
-
-            // West
             addEntry(row,row-1,-aw+cW);
-
-            // North
             addEntry(row,row+Nx2,-an+cN);
-
-            // South
             addEntry(row,row-Nx2,-as+cS);
         }
     }
@@ -136,8 +141,7 @@ void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, co
 
 // Build right - hand side vector
 void matrixType::BuildRHS( const meshType& Mesh, const volScalarField& T, const velocityField& U ){
-    double dx = Mesh.dx;
-    double dy = Mesh.dy;
+    std::fill(B.begin(), B.end(), 0.0);
     double a,b,g;
     
     // south / north boundary conditions
@@ -164,7 +168,7 @@ void matrixType::BuildRHS( const meshType& Mesh, const volScalarField& T, const 
     // internal nodes
     for (int i = 1; i <= Nx; i++){
         for (int j = 1; j <= Ny; j++){
-            setRHS(i, j, dx * dy * 0.0);
+            setRHS(i, j, 0.0);
         }
     }
 

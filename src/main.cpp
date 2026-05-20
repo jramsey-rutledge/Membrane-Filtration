@@ -6,7 +6,8 @@
  */
 
 // Libraries
-#include "meshType.h"
+#include "nonUniformGrid.h"
+#include "uniformGrid.h"
 #include "matrixType.h"
 #include "volScalarField.h"
 #include "surfaceScalarField.h"
@@ -23,7 +24,9 @@ using namespace std;
 int main() {
 
     // Create Mesh
-    meshType Mesh;
+    uniformGrid Mesh;      // uniform mesh   
+    //nonUniformGrid Mesh;   // non uniform mesh
+    Mesh.create(); 
 
     // Create Matrix A and RHS vector
     volScalarField C("C", Mesh);

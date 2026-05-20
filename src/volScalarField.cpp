@@ -14,7 +14,7 @@ using namespace std;
 
 void volScalarField :: read(){
     std :: ifstream file ;
-    file.open (name + ".inp");
+    file.open ("input/" + name + ".inp");
     rho = readDouble ( file );
     cp = readDouble ( file );
     k = readDouble ( file );
