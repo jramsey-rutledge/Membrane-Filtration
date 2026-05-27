@@ -19,12 +19,12 @@ C_full = reshape(C_full, [Nx2, Ny2])';
 C_plot = C_full;
 
 % only plot interior points
-C_plot = C_plot(2:end-2, 2:end-2);
+C_plot = C_plot(2:end-1, 2:end-1);
 %% --- Create mesh ---
 xc = load('x.dat');
 yc = load('y.dat');
-x = xc(2:end-2);
-y = yc(2:end-2);
+x = xc(2:end-1);
+y = yc(2:end-1);
 
 [X,Y] = meshgrid(x,y);
 

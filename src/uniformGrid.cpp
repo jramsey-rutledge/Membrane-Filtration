@@ -35,26 +35,33 @@ void uniformGrid::create(){
     cout << "Nx = " << Nx << endl;
     cout << "Ny = " << Ny << endl;
 
-    // Assign values
-    xc.assign(Nx+2,0.0);
-    for (int i=0; i<Nx+2;i++){
-        xc[i] = -0.5*dx[i] + i*dx[i];
-    }
-
-    yc.assign(Ny+2,0.0);
-    for (int i=0; i<Ny+2;i++){
-        yc[i] = -0.5*dy[i] + i*dy[i];
-    }
+    // Assign x values
+    double dx_uniform = Lx / Nx;
+    dx.assign(Nx, dx_uniform);
 
     xf.assign(Nx+1,0.0);
-    for (int k=0; k<Nx+1; ++k){
-        xf[k] = k * dx[k];
-    }
+    for(int i=0; i<=Nx; i++){ xf[i] = i * dx_uniform; }
+
+    xc.assign(Nx+2,0.0);
+    for(int i=1; i<=Nx; i++){ xc[i] = 0.5 * (xf[i-1] + xf[i]); }
+
+    // ghost cells
+    xc[0] = xc[1] - dx_uniform;
+    xc[Nx+1] = xc[Nx] + dx_uniform;
+
+    // Assign y values
+    double dy_uniform = Ly / Ny;
+    dy.assign(Ny, dy_uniform);
 
     yf.assign(Ny+1,0.0);
-    for (int k=0; k<Ny+1; ++k){
-        yf[k] = k * dy[k];
-    }
+    for(int j=0; j<=Ny; j++){ yf[j] = j * dy_uniform; }
+
+    yc.assign(Ny+2,0.0);
+    for(int j=1; j<=Ny; j++){ yc[j] = 0.5 * (yf[j-1] + yf[j]); }
+
+    // ghost cells
+    yc[0] = yc[1] - dy_uniform;
+    yc[Ny+1] = yc[Ny] + dy_uniform;
 
     // write values
     std::ofstream xfile("output/x.dat");

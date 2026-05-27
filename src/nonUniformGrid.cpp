@@ -42,9 +42,6 @@ void nonUniformGrid::create() {
     xf.assign(Nx+1,0.0);
     yf.assign(Ny+1,0.0);
 
-    dx.assign(Nx,0.0);
-    dy.assign(Ny,0.002/64); //uniform grid spacing in y-direction
-
     // Read Important Parameters
     std::ifstream file("input/nonUniformGrid.inp");
 
@@ -69,14 +66,18 @@ void nonUniformGrid::create() {
     for(int i=1; i<=Ny; i++){ yc[i] = 0.5 * (yf[i-1] + yf[i]); }
 
     // Deal with ghost cells
-    yc[0] = yc[1] - dy[0];
-   yc[Ny+1] = yc[Ny] + (yc[Ny]-yc[Ny-1]);
+    yc[0] = yc[1] - (yc[2] - yc[1]);
+    yc[Ny+1] = yc[Ny] + (yc[Ny] - yc[Ny-1]);    
 
-    // Assign uniform x faces
-    for(int j=0; j<=Nx; j++){ xf[j] = j * dx[j]; }
+    // Assign uniform x spacing
+    double dx_uniform = Lx / Nx;
+    dx.assign(Nx,dx_uniform);
+    for(int j=0; j<=Nx; j++){ xf[j] = j * dx_uniform; }
+    for(int j=1; j<=Nx; j++){ xc[j] = 0.5*(xf[j-1]+xf[j]);}
 
-    // Assign uniform x centers
-    for(int j=0; j<=Nx+1; j++){ xc[j] = -0.5*dx[j] + j*dx[j]; }
+    // Deal with ghost cells
+    xc[0] = xc[1] - dx_uniform;
+    xc[Nx+1] = xc[Nx] + dx_uniform;
     
     // Write x values to data file
     std::ofstream xfile("output/x.dat");
