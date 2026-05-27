@@ -57,10 +57,8 @@ Convective transport terms are discretized using central differencing. Face flux
 
 Diffusive transport coefficients are computed using face areas and local cell spacing:
 
-\begin{align}
 $$a_E & = \frac{D A_E}{\Delta x_E}$$\\
 $$a_N & = \frac{D A_N}{\Delta y_N}$$
-\end{align}
 
 with analogous expressions for west and south faces.
 
