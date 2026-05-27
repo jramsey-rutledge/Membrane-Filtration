@@ -1,7 +1,6 @@
 // Libraries
 #include "surfaceScalarField.h"
 #include "meshType.h"
-#include "volScalarField.h"
 #include "velocityField.h"
 #include <string>
 #include <cmath>
@@ -35,27 +34,27 @@ double surfaceScalarField::gets(int i, int j) const {
 }
 
 // Compute fluxes on east/west faces
-void surfaceScalarField::computePhix(const meshType& Mesh, const volScalarField& T, const velocityField& U){
+void surfaceScalarField::computePhix(const meshType& Mesh, const velocityField& U){
     int Nx = Mesh.Nx;
     int Ny = Mesh.Ny;
     for (int i=0; i<=Nx; i++){
         for (int j=0; j<Ny; j++){
             double x = Mesh.xf[i];
             double y = Mesh.yc[j+1];
-            phix[i+j*(Nx+1)] = T.rho*U.compU(x,y);
+            phix[i+j*(Nx+1)] = U.compU(x,y);
         }
     }
 }
 
 // Compute fluxes on north/south faces
-void surfaceScalarField::computePhiy(const meshType& Mesh, const volScalarField& T, const velocityField& U){
+void surfaceScalarField::computePhiy(const meshType& Mesh, const velocityField& U){
     int Nx = Mesh.Nx;
     int Ny = Mesh.Ny;
     for (int i=0; i<Nx; i++){
         for (int j=0; j<=Ny; j++){
             double x = Mesh.xc[i+1];
             double y = Mesh.yf[j];
-            phiy[i+j*Nx] = T.rho*U.compV(x,y); 
+            phiy[i+j*Nx] = U.compV(x,y); 
         }
     }
 }

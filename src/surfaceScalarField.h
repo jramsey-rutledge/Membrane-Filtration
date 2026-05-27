@@ -6,7 +6,6 @@
 
 // libraries
 #include <vector>
-class volScalarField;
 class velocityField;
 class meshType;
 
@@ -26,9 +25,9 @@ struct surfaceScalarField {
 
     double gets(int i, int j) const ;
 
-    void computePhix(const meshType& Mesh, const volScalarField& T, const velocityField& U);
+    void computePhix(const meshType& Mesh, const velocityField& U);
 
-    void computePhiy(const meshType& Mesh, const volScalarField& T, const velocityField& U);
+    void computePhiy(const meshType& Mesh, const velocityField& U);
 };
 
 #endif

@@ -97,10 +97,10 @@ void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, co
             double As = An;
 
             // Diffusion
-            double ae = T.k * Ae / dxe;
-            double aw = T.k * Aw / dxw;
-            double an = T.k * An / dyn;
-            double as = T.k * As / dys;
+            double ae = T.D * Ae / dxe;
+            double aw = T.D * Aw / dxw;
+            double an = T.D * An / dyn;
+            double as = T.D * As / dys;
 
             // Fluxes
             double phi_e = flux.gete(i,j);
@@ -108,10 +108,10 @@ void matrixType::BuildA(const meshType& Mesh, const surfaceScalarField& flux, co
             double phi_s = flux.gets(i,j);
             double phi_n = flux.getn(i,j);
 
-            double Fe = T.cp * phi_e * Ae;
-            double Fw = T.cp * phi_w * Aw;
-            double Fn = T.cp * phi_n * An;
-            double Fs = T.cp * phi_s * As;
+            double Fe = phi_e * Ae;
+            double Fw = phi_w * Aw;
+            double Fn = phi_n * An;
+            double Fs = phi_s * As;
 
             // Central differencing convection
             double cE =  0.5*Fe;

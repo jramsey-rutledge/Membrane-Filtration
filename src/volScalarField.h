@@ -15,7 +15,7 @@ class meshType;
 
 // Define volScalarField structure
 struct volScalarField {
-    double rho, cp, k;            // thermophysical properties
+    double D;                     // physical properties
     int Nx, Ny;                   // grid resolution
     int Ntot;                     // total number of nodes
     std::vector<double> values;   // scalar field values

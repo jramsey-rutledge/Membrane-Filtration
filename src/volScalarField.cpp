@@ -15,17 +15,13 @@ using namespace std;
 void volScalarField :: read(){
     std :: ifstream file ;
     file.open ("input/" + name + ".inp");
-    rho = readDouble ( file );
-    cp = readDouble ( file );
-    k = readDouble ( file );
+    D = readDouble ( file );
     file.close ();
 }
 
 void volScalarField::dispInputs() const {
     std::cout << "- -- " << name << " inputs - --" << "\n";
-    std::cout << " rho = " << rho << "\n ";
-    std::cout << " cp = " << cp << "\n ";
-    std::cout << "k = " << k << "\n ";
+    std::cout << "D = " << D << "\n ";
 }
 
 void volScalarField::allocate(const meshType& Mesh) {
@@ -37,7 +33,7 @@ void volScalarField::allocate(const meshType& Mesh) {
 
 // Constructors
 volScalarField::volScalarField(){
-    name = "T";
+    name = "C";
     read();
     dispInputs();
 }

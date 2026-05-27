@@ -111,7 +111,7 @@ make
 ```
 
 ### Adjusting the Simulation
-Edit the .inp files in 'input/' to change the spatial domain, temporal domain, fan parameters, or physical properties before building
+Edit the .inp files in 'input/' to change the spatial domain, velocity inputs, clustering parameters, or physical properties before building
 
 ## Project Structure
 

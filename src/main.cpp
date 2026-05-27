@@ -38,8 +38,8 @@ int main() {
     // Create flux
     surfaceScalarField flux;
     flux.allocate(Mesh);
-    flux.computePhix(Mesh,C,U);
-    flux.computePhiy(Mesh,C,U);
+    flux.computePhix(Mesh,U);
+    flux.computePhiy(Mesh,U);
 
     matrixType Matrix(Mesh);          // initialize matrix
     Matrix.BuildA(Mesh,flux,C);       // build matrix
