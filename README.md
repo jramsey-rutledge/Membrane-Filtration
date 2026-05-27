@@ -25,7 +25,7 @@ The solver is intended as a simplified CFD framework for studying concentration 
 ## Physics and Mathematical Model
 
 ### Governing Equations
-The concentration field is governed by the steady two-dimensional advection–diffusion equation:
+The concentration field is governed by the steady two-dimensional advection–diffusion equation
 
 $$ u \frac{\partial C}{\partial x} + v \frac{\partial C}{\partial y} = D \left( \frac{\partial^2 C}{\partial x^2} + \frac{\partial^2 C}{\partial y^2} \right)$$
 
@@ -55,15 +55,15 @@ Convective transport terms are discretized using central differencing. Face flux
 
 ### Diffusion Terms
 
-Diffusive transport coefficients are computed using face areas and local cell spacing:
+Diffusive transport coefficients are computed using face areas and local cell spacing
 
-$$a_E & = \frac{D A_E}{\Delta x_E}$$\\
-$$a_N & = \frac{D A_N}{\Delta y_N}$$
+$$a_E = \frac{D A_E}{\Delta x_E}$$
+$$a_N = \frac{D A_N}{\Delta y_N}$$
 
 with analogous expressions for west and south faces.
 
 ### Nonuniform Mesh Clustering
-Although the solver supports both uniform mesh spacing and nonuniform stretched spacing, the nonuniform mesh is best suited for this setting because it improves near-wall resolution and better captures the steep concentration gradients associated with concentration polarization. The nonuniform mesh generator uses hyperbolic tangent stretching functions to cluster grid points near the membrane walls. The wall-normal face locations are generated using:
+Although the solver supports both uniform mesh spacing and nonuniform stretched spacing, the nonuniform mesh is best suited for this setting because it improves near-wall resolution and better captures the steep concentration gradients associated with concentration polarization. The nonuniform mesh generator uses hyperbolic tangent stretching functions to cluster grid points near the membrane walls. The wall-normal face locations are generated using
 
 $$ y_f = \frac{L_y}{2} \left( 1 + \frac{\tanh(\beta(2s-1))}{\tanh(\beta)}\right) $$ 
 
@@ -71,7 +71,7 @@ where $s \in \[0,1\]$ is the normalized computational coordinate and $\beta$ con
 
 ### Linear System Assembly and Solver
 
-The discretized equations are assembled into a sparse linear system:
+The discretized equations are assembled into a sparse linear system
 
 $$A\phi=b$$
 
