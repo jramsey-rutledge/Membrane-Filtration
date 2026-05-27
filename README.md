@@ -57,19 +57,19 @@ Convective transport terms are discretized using central differencing. Face flux
 
 Diffusive transport coefficients are computed using face areas and local cell spacing:
 
-\begin{align*}
-a_E & = \frac{D A_E}{\Delta x_E}\\
-a_N & = \frac{D A_N}{\Delta y_N}
-\end{align*}
+\begin{align}
+$$a_E & = \frac{D A_E}{\Delta x_E}$$\\
+$$a_N & = \frac{D A_N}{\Delta y_N}$$
+\end{align}
 
 with analogous expressions for west and south faces.
 
 ### Nonuniform Mesh Clustering
 Although the solver supports both uniform mesh spacing and nonuniform stretched spacing, the nonuniform mesh is best suited for this setting because it improves near-wall resolution and better captures the steep concentration gradients associated with concentration polarization. The nonuniform mesh generator uses hyperbolic tangent stretching functions to cluster grid points near the membrane walls. The wall-normal face locations are generated using:
 
-$$ y_f = \frac{L_y}{2} \left( 1 + \frac{\tanh(\Beta(2s-1))}{\tanh(\Beta)}\right) $$ 
+$$ y_f = \frac{L_y}{2} \left( 1 + \frac{\tanh(\beta(2s-1))}{\tanh(\beta)}\right) $$ 
 
-where $s \in \[0,1\]$ is the normalized computational coordinate and β controls clustering intensity.
+where $s \in \[0,1\]$ is the normalized computational coordinate and $\beta$ controls clustering intensity.
 
 ### Linear System Assembly and Solver
 
@@ -77,8 +77,7 @@ The discretized equations are assembled into a sparse linear system:
 
 $$A\phi=b$$
 
-where A is the sparse coefficient matrix, ϕ is the concentration vector,
-and b is the right-hand side vector. Sparse matrix coefficients are stored using triplet assembly before constructing the Eigen sparse matrix object.
+where $A$ is the sparse coefficient matrix, $\phi$ is the concentration vector, and $b$ is the right-hand side vector. Sparse matrix coefficients are stored using triplet assembly before constructing the Eigen sparse matrix object.
 
 The resulting linear system is solved using the Eigen library sparse LU decomposition solver. The solution is then mapped back into the scalar field storage structure for post-processing and visualization.
 
